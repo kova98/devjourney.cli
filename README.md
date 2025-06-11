@@ -1,20 +1,12 @@
-# DevJourney CLI Tool
+# DevJourney CLI
 
-DevJourney CLI is a tool that allows uploading entries and content to devjourney.io 
+A command-line interface tool for uploading content entries to [devjourney.io](https://devjourney.io). 
 
 ## Features
 
-- accept an entry in a markdown file
-- parse it to extract:
-    - text content
-    - metadata
-    - media content
-- upload media content
-- replace relative links with links of uploaded media
-- authenticate using api key from ENV or parameter
-- submit the finished content to devjourney
+- Upload markdown entries with embedded media content
 
-## Commands
+## Usage
 
 ```bash
 # uploads markdown entry and all its media content
