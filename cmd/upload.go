@@ -139,7 +139,7 @@ func upload(cmd *cobra.Command, args []string) {
 	}
 
 	var meta Metadata
-	_, err = frontmatter.Parse(strings.NewReader(markdown), &meta)
+	content, err := frontmatter.Parse(strings.NewReader(markdown), &meta)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -189,7 +189,7 @@ func upload(cmd *cobra.Command, args []string) {
 		Date:         date,
 		MinutesSpent: int(math.Round(timeSpent.Minutes())),
 		Mood:         meta.Mood,
-		Content:      markdown,
+		Content:      strings.Trim(string(content), "\n"),
 		Title:        meta.Title,
 	}
 
