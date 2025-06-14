@@ -1,3 +1,3 @@
 package cfg
 
-var ApiRoot string = "http://localhost:8080"
+var ApiRoot string = "https://be.devjourney.io"
