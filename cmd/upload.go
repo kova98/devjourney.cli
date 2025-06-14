@@ -151,6 +151,16 @@ func upload(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
+	if meta.Date == "" {
+		fmt.Println("Date is required in the metadata.")
+		os.Exit(1)
+	}
+
+	if meta.Project == "" {
+		fmt.Println("Project is required in the metadata.")
+		os.Exit(1)
+	}
+
 	timeSpent, err := time.ParseDuration(meta.TimeSpent)
 	check(err)
 	date, err := time.Parse(time.DateOnly, meta.Date)
@@ -165,13 +175,21 @@ func upload(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	// TODO: replace projectId with project slug
+	if projectId == "" {
+		fmt.Printf("Project '%s' not found in your projects. Available projects:\n", meta.Project)
+		for _, project := range userInfo.Projects {
+			fmt.Printf("- %s (%s)\n", project.Name, project.Slug)
+		}
+		fmt.Println("Please create the project first or use an existing one.")
+		os.Exit(1)
+	}
+
 	req := &models.CreateEntryRequest{
 		ProjectID:    projectId,
 		Date:         date,
 		MinutesSpent: int(math.Round(timeSpent.Minutes())),
 		Mood:         meta.Mood,
-		Content:      "",
+		Content:      markdown,
 		Title:        meta.Title,
 	}
 
@@ -191,6 +209,8 @@ func upload(cmd *cobra.Command, args []string) {
 
 	if resp.StatusCode != http.StatusCreated {
 		fmt.Printf("Bad status: %d\n", resp.StatusCode)
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		fmt.Println("Response body:", string(bodyBytes))
 		os.Exit(1)
 	}
 
@@ -218,7 +238,7 @@ func getUserInfo() models.GetUserInfoResponse {
 	check(err)
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Bad status: %d\n", resp.StatusCode)
+		fmt.Printf("/users/info: Bad status: %d\n", resp.StatusCode)
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		fmt.Println("Response body:", string(bodyBytes))
 		os.Exit(1)
